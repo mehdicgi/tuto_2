@@ -129,6 +129,21 @@ var SampleApp = function()
             res.send('1');
         };
 
+        self.routes['/authorized'] = function(req, res) {
+             var ip = req.ip || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
+            if (ip == '194.3.185.38') {
+                 res.send('your are welcome'); 
+                 res.end();
+                
+            }else{
+                res.send('your ip '+ip+' is not allowed'); 
+              res.end();
+              
+            }
+            
+        };
+
+
 
         self.routes['/api/acores/siteAcore/filtreGuichet/:codeAcore/:id'] = function (req, res)
         {
