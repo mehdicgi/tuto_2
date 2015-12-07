@@ -130,16 +130,19 @@ var SampleApp = function()
         };
 
         self.routes['/authorized'] = function(req, res) {
-             var ip = req.ip || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
-            if (ip == '194.3.185.38') {
-                 res.send('your are welcome'); 
-                 res.end();
+             var forwardedIpsStr = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+           if (forwardedIpsStr) {
+                if (forwardedIpsStr == '194.3.185.38') {
+                     res.send('your are welcome'); 
+                     res.end();
+                    
+                }else{
+                    res.send('your ip '+forwardedIpsStr+' is not allowed T1'); 
                 
-            }else{
-                res.send('your ip '+ip+' is not allowed'); 
-              res.end();
-              
-            }
+                  res.end();
+                  
+                }
+           } 
             
         };
 
@@ -207,6 +210,8 @@ var SampleApp = function()
     self.initializeServer = function() {
         self.createRoutes();
         self.app = express();
+        self.app.enable('trust proxy');
+        self.app.set("trust proxy", true);
 
         //  Add handlers for the app (from the routes).
         for (var r in self.routes)
